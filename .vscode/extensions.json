@@ -1,0 +1,27 @@
+{
+  "recommendations": [
+    "formulahendry.auto-rename-tag",
+    "dsznajder.es7-react-js-snippets",
+    "dbaeumer.vscode-eslint",
+    "skyran.js-jsx-snippets",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "wayou.vscode-todo-highlight",
+    "gruntfuggly.todo-tree",
+    "jonkwheeler.styled-components-snippets",
+    "shd101wyy.markdown-preview-enhanced",
+    "unifiedjs.vscode-mdx",
+    "ban.spellright",
+    "prisma.prisma",
+    "xyc.vscode-mdx-preview",
+    "nixon.env-cmd-file-syntax",
+    "arcanis.vscode-zipfs",
+    "orta.vscode-jest",
+    "wallabyjs.console-ninja",
+    "davidanson.vscode-markdownlint",
+    "bungcip.better-toml",
+    "ms-vsliveshare.vsliveshare",
+    "prisma.prisma"
+  ],
+  "unwantedRecommendations": []
+}

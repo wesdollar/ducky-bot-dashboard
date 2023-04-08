@@ -1,0 +1,95 @@
+{
+  // Place your dwellby workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+  // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+  // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+  // used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+  // Placeholders with the same ids are connected.
+  // Example:
+  // "Print to console": {
+  // 	"scope": "javascript,typescript",
+  // 	"prefix": "log",
+  // 	"body": [
+  // 		"console.log('$1');",
+  // 		"$2"
+  // 	],
+  // 	"description": "Log output to console"
+  // }
+
+  "Print to console": {
+    "scope": "javascript,typescript",
+    "prefix": "log",
+    "body": ["console.log($1);", "$2"],
+    "description": "Log output to console"
+  },
+
+  "React Component Short Return": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "rccs",
+    "body": [
+      "export const $1 = () => (",
+      "  <Box>",
+      "    $2",
+      "  </Box>",
+      ");"
+    ],
+    "description": "Creates a new React component using fat-arrow syntax."
+  },
+
+  "React Component Long Return": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "rccl",
+    "body": [
+      "export const $1 = () => {",
+      "  return (",
+      "  <Box>",
+      "      $2",
+      "  </Box>",
+      "  );",
+      "}"
+    ],
+    "description": "Creates a new React component using fat-arrow syntax."
+  },
+
+  "Stringified console log": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "logs",
+    "body": ["console.log(JSON.stringify($1, null, 2));"],
+    "description": "Creates a new React component using fat-arrow syntax."
+  },
+
+  "Jest describe block": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "jdesc",
+    "body": ["describe(\"$1\", () => {$2});"],
+    "description": "Creates a jest describe statement."
+  },
+
+  "Jest it block": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "jit",
+    "body": ["it(\"$1\", () => {$2});"],
+    "description": "Create a jest it statement."
+  },
+
+  "Jest async it block": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "jita",
+    "body": ["it(\"$1\", async () => {$2});"],
+    "description": "Create a jest async it statement."
+  },
+
+  "Jest Mock method/function": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "jmock",
+    "body": ["jest.mock(\"$1\", () => ({", "$2: jest.fn($3),", "}));"],
+    "description": "Create a jest async it statement."
+  },
+
+  "@tsignore mockery for unit tests": {
+    "scope": "javascript,typescript,javascriptreact,typescriptreact",
+    "prefix": "tsmockery",
+    "body": ["// @ts-ignore mockery"],
+    "description": "Ignore next line of TS because we're mocking the data for unit testing only."
+  }
+}
