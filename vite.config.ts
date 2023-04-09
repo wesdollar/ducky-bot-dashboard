@@ -14,6 +14,9 @@ export default defineConfig({
         "./src/**/*.js",
         "./src/**/*.jsx",
       ],
+      fix: true,
+      failOnError: false,
+      failOnWarning: false,
     }),
   ],
   resolve: {
@@ -21,5 +24,10 @@ export default defineConfig({
       "@": "/src",
     },
     extensions: [".js", ".ts", ".jsx", ".tsx"],
+  },
+  server: {
+    hmr: {
+      // overlay: false,
+    },
   },
 });
