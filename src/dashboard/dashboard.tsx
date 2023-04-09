@@ -62,7 +62,6 @@ export const Dashboard = () => {
               setCurrentSoundClip("applause");
               break;
             case "funny-drummy":
-              console.log("hit funny-drummy");
               setCurrentSoundClip("funny-drummy");
               break;
             default:
