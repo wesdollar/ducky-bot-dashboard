@@ -34,6 +34,7 @@ export const Dashboard = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const [currentSoundClip, setCurrentSoundClip] = useState("");
+  const [audioIsPlaying, setAudioIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -42,6 +43,11 @@ export const Dashboard = () => {
 
   const handleAudioEnd = () => {
     setCurrentSoundClip("");
+    setAudioIsPlaying(false);
+  };
+
+  const handleAudioPlay = () => {
+    setAudioIsPlaying(true);
   };
 
   useEffect(() => {
@@ -51,22 +57,12 @@ export const Dashboard = () => {
       console.log("last chat message", lastChatMessage);
 
       // @ts-ignore TODO: fix
-      if (lastChatMessage.message.chatCommands) {
+      if (lastChatMessage.message.chatCommand) {
         // @ts-ignore TODO: fix
-        const [chatCommand] = lastChatMessage.message.chatCommands;
+        const { chatCommand } = lastChatMessage.message;
 
-        if (chatCommand) {
-          // eslint-disable-next-line max-depth
-          switch (chatCommand) {
-            case "applause":
-              setCurrentSoundClip("applause");
-              break;
-            case "funny-drummy":
-              setCurrentSoundClip("funny-drummy");
-              break;
-            default:
-              setCurrentSoundClip("");
-          }
+        if (chatCommand && !audioIsPlaying) {
+          setCurrentSoundClip(chatCommand);
         }
       }
     }
@@ -215,6 +211,7 @@ export const Dashboard = () => {
               src={`/sounds/${currentSoundClip}.wav`}
               autoPlay
               onEnded={handleAudioEnd}
+              onPlay={handleAudioPlay}
               ref={audioRef}
             />
           </>
