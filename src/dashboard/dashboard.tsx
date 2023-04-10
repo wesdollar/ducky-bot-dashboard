@@ -7,16 +7,15 @@ import {
   BadgeVariants,
   Box,
   Card,
-  ChatBubble,
-  ChatLog,
-  ChatMessage,
-  ChatMessageMeta,
-  ChatMessageMetaItem,
   Column,
   Grid,
   Heading,
-  Text,
+  ToastContainer,
+  Toaster,
+  useToaster,
 } from "@twilio-paste/core";
+import { ChatDisplay } from "../components/chat-log/chat-display";
+import { NotesEntry } from "../components/users/notes-entry/notes-entry";
 
 interface JoinedChatData {
   username: string;
@@ -36,6 +35,20 @@ export const Dashboard = () => {
   const [currentSoundClip, setCurrentSoundClip] = useState("");
   const [audioIsPlaying, setAudioIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [userDisplayName, setUserDisplayName] = useState("");
+  const toaster = useToaster();
+
+  const handleModalToggle = (
+    isOpen: boolean,
+    userDisplayName?: string | undefined
+  ) => {
+    setModalIsOpen(isOpen);
+
+    if (userDisplayName) {
+      setUserDisplayName(userDisplayName);
+    }
+  };
 
   useEffect(() => {
     console.log(currentSoundClip);
@@ -53,8 +66,6 @@ export const Dashboard = () => {
   useEffect(() => {
     if (chatMessages.length) {
       const lastChatMessage = chatMessages[chatMessages.length - 1];
-
-      console.log("last chat message", lastChatMessage);
 
       // @ts-ignore TODO: fix
       if (lastChatMessage.message.chatCommand) {
@@ -163,112 +174,86 @@ export const Dashboard = () => {
   }, [joinedChatData]);
 
   return (
-    <Grid>
-      <Column span={4}>
-        <Box>
-          <Box marginBottom={"space60"}>
-            {socketConnected ? (
-              <Badge as="span" variant="success">
-                client connected
-              </Badge>
-            ) : (
-              <Badge as="span" variant={"error"}>
-                client disconnected
-              </Badge>
-            )}
-          </Box>
-          <Heading as="h1" variant="heading10">
-            Hi, Chat!
-          </Heading>
-          {joinedChatData.map((data: JoinedChatData) => {
-            let badgeColor: BadgeVariants = "decorative10";
-
-            if (data.mod) {
-              badgeColor = "decorative20";
-            }
-
-            if (data.subscriber) {
-              badgeColor = "decorative40";
-            }
-
-            return (
-              <Box key={uniqueId()} marginBottom={"space30"}>
-                <Badge as="span" variant={badgeColor}>
-                  {data.username}
+    <>
+      <Grid>
+        <Column span={4}>
+          <Box>
+            <Box marginBottom={"space60"}>
+              {socketConnected ? (
+                <Badge as="span" variant="success">
+                  client connected
                 </Badge>
-              </Box>
-            );
-          })}
-        </Box>
-      </Column>
-      <Column span={4}>
-        {/* <audio controls src="/sounds/applause.wav" /> */}
-        {currentSoundClip ? (
-          <>
-            {/* eslint-disable-next-line */}
-            <audio
-              controls
-              src={`/sounds/${currentSoundClip}.wav`}
-              autoPlay
-              onEnded={handleAudioEnd}
-              onPlay={handleAudioPlay}
-              ref={audioRef}
-            />
-          </>
-        ) : null}
-      </Column>
-      <Column span={4}>
-        <Card>
-          <Box
-            height={"500px"}
-            overflow={"scroll"}
-            overflowX={"hidden"}
-            ref={chatWindowRef}
-          >
-            <ChatLog>
-              {chatMessages.length
-                ? chatMessages.map(
-                    ({
-                      message: { message, displayName, subscriber, emotes },
-                      timestamp,
-                    }) => (
-                      <ChatMessage key={uniqueId()} variant="inbound">
-                        <ChatBubble>
-                          {message} {/* @ts-ignore because I said so */}
-                          {emotes.length && emotes[0] !== null
-                            ? (emotes as string[]).map((emoteId) => (
-                                <img
-                                  key={uniqueId()}
-                                  src={`${emoteId}`}
-                                  alt="twitch emote"
-                                  style={{ height: "16px", width: "auto" }}
-                                />
-                              ))
-                            : null}
-                        </ChatBubble>
-                        <ChatMessageMeta
-                          aria-label={`message from ${displayName}`}
-                        >
-                          <ChatMessageMetaItem>
-                            <Text
-                              as={"span"}
-                              color={
-                                subscriber ? "colorTextIconNew" : "colorText"
-                              }
-                            >
-                              {displayName}
-                            </Text>{" "}
-                            - {timestamp}
-                          </ChatMessageMetaItem>
-                        </ChatMessageMeta>
-                      </ChatMessage>
-                    )
-                  )
-                : null}
-            </ChatLog>
+              ) : (
+                <Badge as="span" variant={"error"}>
+                  client disconnected
+                </Badge>
+              )}
+            </Box>
+            <Heading as="h1" variant="heading10">
+              Hi, Chat!
+            </Heading>
+            {joinedChatData.map((data: JoinedChatData) => {
+              let badgeColor: BadgeVariants = "decorative10";
+
+              if (data.mod) {
+                badgeColor = "decorative20";
+              }
+
+              if (data.subscriber) {
+                badgeColor = "decorative40";
+              }
+
+              return (
+                <Box key={uniqueId()} marginBottom={"space30"}>
+                  <Badge as="span" variant={badgeColor}>
+                    {data.username}
+                  </Badge>
+                </Box>
+              );
+            })}
           </Box>
-        </Card>
-      </Column>
-    </Grid>
+        </Column>
+        <Column span={4}>
+          {currentSoundClip && (
+            <>
+              {/* eslint-disable-next-line */}
+              <audio
+                controls
+                src={`/sounds/${currentSoundClip}.wav`}
+                autoPlay
+                onEnded={handleAudioEnd}
+                onPlay={handleAudioPlay}
+                ref={audioRef}
+              />
+            </>
+          )}
+        </Column>
+        <Column span={4}>
+          <Card>
+            <Box
+              height={"500px"}
+              overflow={"scroll"}
+              overflowX={"hidden"}
+              ref={chatWindowRef}
+            >
+              <ChatDisplay
+                chatMessages={chatMessages}
+                handleToggleModal={handleModalToggle}
+              />
+            </Box>
+          </Card>
+        </Column>
+      </Grid>
+      <NotesEntry
+        modalIsOpen={modalIsOpen}
+        handleModalToggle={handleModalToggle}
+        userDisplayName={userDisplayName}
+        // @ts-ignore come back
+        handleToast={toaster}
+      />
+      <ToastContainer>
+        <Toaster {...toaster} />
+      </ToastContainer>
+    </>
   );
 };
