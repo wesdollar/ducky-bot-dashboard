@@ -50,10 +50,6 @@ export const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(currentSoundClip);
-  }, [currentSoundClip]);
-
   const handleAudioEnd = () => {
     setCurrentSoundClip("");
     setAudioIsPlaying(false);
