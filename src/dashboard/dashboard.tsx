@@ -82,7 +82,7 @@ export const Dashboard = ({ handleToast }: DashboardProps) => {
   }, [chatMessages]);
 
   useEffect(() => {
-    const socket = io(`ws://${import.meta.env.VITE_API_URL}`);
+    const socket = io(`wss://${import.meta.env.VITE_API_URL}`);
 
     socket.open();
     socket.emit("hello");
