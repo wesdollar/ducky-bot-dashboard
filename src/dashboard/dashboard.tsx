@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { sortBy, uniqueId } from "lodash";
+import { sortBy } from "lodash";
 import axios from "axios";
 import {
-  Badge,
-  BadgeVariants,
   Box,
   Card,
   Column,
   Grid,
-  Heading,
   ToastContainer,
   Toaster,
   useToaster,
@@ -21,14 +18,9 @@ import {
   ResponseUserJoinedObject,
   ResponseUserLeftObject,
 } from "@dollardojo/modules/dist/types/irc-messages/irc-message-object";
-
-interface JoinedChatData {
-  username: string;
-  lastSeen: Date;
-  mod: boolean;
-  subscriber: boolean;
-  timestamp: string;
-}
+import { ClientStatus } from "../components/client-status";
+import { MainHeader } from "../components/headings/main-header/main-header";
+import { UsersDisplay } from "../components/users/users-display/users-display";
 
 export const Dashboard = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
@@ -178,39 +170,9 @@ export const Dashboard = () => {
       <Grid>
         <Column span={4}>
           <Box>
-            <Box marginBottom={"space60"}>
-              {socketConnected ? (
-                <Badge as="span" variant="success">
-                  client connected
-                </Badge>
-              ) : (
-                <Badge as="span" variant={"error"}>
-                  client disconnected
-                </Badge>
-              )}
-            </Box>
-            <Heading as="h1" variant="heading10">
-              Hi, Chat!
-            </Heading>
-            {joinedChatData.map((data: JoinedChatData) => {
-              let badgeColor: BadgeVariants = "decorative10";
-
-              if (data.mod) {
-                badgeColor = "decorative20";
-              }
-
-              if (data.subscriber) {
-                badgeColor = "decorative40";
-              }
-
-              return (
-                <Box key={uniqueId()} marginBottom={"space30"}>
-                  <Badge as="span" variant={badgeColor}>
-                    {data.username}
-                  </Badge>
-                </Box>
-              );
-            })}
+            <ClientStatus socketConnected={socketConnected} />
+            <MainHeader>Hi, Chat!</MainHeader>
+            <UsersDisplay joinedChatData={joinedChatData} />
           </Box>
         </Column>
         <Column span={4}>
