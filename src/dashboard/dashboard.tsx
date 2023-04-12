@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { uniqueId } from "lodash";
+import { sortBy, uniqueId } from "lodash";
 import axios from "axios";
 import {
   Badge,
@@ -16,6 +16,11 @@ import {
 } from "@twilio-paste/core";
 import { ChatDisplay } from "../components/chat-log/chat-display";
 import { NotesEntry } from "../components/users/notes-entry/notes-entry";
+import { ChatMessagePayload } from "@dollardojo/modules/dist/types/chat/chat-message-payload";
+import {
+  ResponseUserJoinedObject,
+  ResponseUserLeftObject,
+} from "@dollardojo/modules/dist/types/irc-messages/irc-message-object";
 
 interface JoinedChatData {
   username: string;
@@ -26,8 +31,10 @@ interface JoinedChatData {
 }
 
 export const Dashboard = () => {
-  const [chatMessages, setChatMessages] = useState([]);
-  const [joinedChatData, setJoinedChatData] = useState([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
+  const [joinedChatData, setJoinedChatData] = useState<
+    ResponseUserJoinedObject[]
+  >([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [socketId, setSocketId] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
@@ -63,9 +70,7 @@ export const Dashboard = () => {
     if (chatMessages.length) {
       const lastChatMessage = chatMessages[chatMessages.length - 1];
 
-      // @ts-ignore TODO: fix
       if (lastChatMessage.message.chatCommand) {
-        // @ts-ignore TODO: fix
         const { chatCommand } = lastChatMessage.message;
 
         if (chatCommand && !audioIsPlaying) {
@@ -102,49 +107,48 @@ export const Dashboard = () => {
       setSocketConnected(socket.connected);
     });
 
-    socket.on("chat-message-cache", ({ data }) => {
-      // @ts-ignore i'm right, you're wrong, we can reconcile our differences later
-      setChatMessages((prevData) => {
-        // @ts-ignore TODO: fix once we have the modules in
-        if (!chatMessages.includes(data.displayName)) {
+    socket.on(
+      "chat-message-cache",
+      ({ data }: { data: ChatMessagePayload[] }) => {
+        setChatMessages((prevData) => {
           return [...prevData, ...data];
-        }
-      });
-    });
-
-    socket.on("user-joined-chat-cache", ({ data }) => {
-      const userExistsInList = data.some((item: any) =>
-        item.username.includes(data.username)
-      );
-
-      if (!userExistsInList) {
-        const joinedData = [...joinedChatData, ...data];
-
-        joinedData.sort((a, b) => {
-          if (a.username < b.username) {
-            return -1;
-          }
-
-          if (a.username > b.username) {
-            return 1;
-          }
-
-          return 0;
         });
-
-        // @ts-ignore i'm right, you're wrong, we can reconcile our differences later
-        setJoinedChatData((prevData) => [...prevData, ...data]);
       }
-    });
+    );
 
-    socket.on("user-left-chat-cache", ({ data }) => {
-      const updatedChatUserList = joinedChatData.filter(
-        // @ts-ignore TODO: fix typing
-        (obj) => obj.user !== data.user
-      );
+    socket.on(
+      "user-joined-chat-cache",
+      ({ data }: { data: ResponseUserJoinedObject[] }) => {
+        let userExistsInList = false;
 
-      setChatMessages(updatedChatUserList);
-    });
+        for (const user of joinedChatData) {
+          if (user.username === data[0].username) {
+            userExistsInList = true;
+
+            break;
+          }
+        }
+
+        if (!userExistsInList) {
+          return setJoinedChatData((prevData) =>
+            sortBy([...prevData, ...data], ({ username }) => username)
+          );
+        }
+
+        setJoinedChatData((prevData) => prevData);
+      }
+    );
+
+    socket.on(
+      "user-left-chat-cache",
+      ({ data }: { data: ResponseUserLeftObject[] }) => {
+        const updatedChatUserList = joinedChatData.filter(
+          (obj) => obj.username !== data[0].user
+        );
+
+        setJoinedChatData(updatedChatUserList);
+      }
+    );
 
     return () => {
       socket.close();
