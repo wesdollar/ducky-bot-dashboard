@@ -1,4 +1,4 @@
-import { ChatMessagePayload } from "@dollardojo/modules/dist/types/chat/chat-message-payload";
+import { ChatMessagePayload } from "@dollardojo/modules/types/chat/chat-message-payload";
 import {
   ChatBubble,
   ChatLog,

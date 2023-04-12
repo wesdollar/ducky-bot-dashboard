@@ -13,11 +13,11 @@ import {
 } from "@twilio-paste/core";
 import { ChatDisplay } from "../components/chat-log/chat-display";
 import { NotesEntry } from "../components/users/notes-entry/notes-entry";
-import { ChatMessagePayload } from "@dollardojo/modules/dist/types/chat/chat-message-payload";
+import { ChatMessagePayload } from "@dollardojo/modules/types/chat/chat-message-payload";
 import {
   ResponseUserJoinedObject,
   ResponseUserLeftObject,
-} from "@dollardojo/modules/dist/types/irc-messages/irc-message-object";
+} from "@dollardojo/modules/types/irc-messages/irc-message-object";
 import { ClientStatus } from "../components/client-status";
 import { MainHeader } from "../components/headings/main-header/main-header";
 import { UsersDisplay } from "../components/users/users-display/users-display";

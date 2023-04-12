@@ -1,4 +1,4 @@
-import { ResponseUserJoinedObject } from "@dollardojo/modules/dist/types/irc-messages/irc-message-object";
+import { ResponseUserJoinedObject } from "@dollardojo/modules/types/irc-messages/irc-message-object";
 import { Badge, BadgeVariants, Box } from "@twilio-paste/core";
 import { uniqueId } from "lodash";
 
