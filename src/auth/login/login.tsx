@@ -51,7 +51,7 @@ export const Login = ({
       }
 
       response = await axios.post(
-        `//${import.meta.env.API_URL}/users/auth/login`,
+        `//${import.meta.env.VITE_API_URL}/users/auth/login`,
         {
           data: {
             username,
