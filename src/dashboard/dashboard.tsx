@@ -7,9 +7,7 @@ import {
   Card,
   Column,
   Grid,
-  ToastContainer,
-  Toaster,
-  useToaster,
+  UseToasterReturnedProps,
 } from "@twilio-paste/core";
 import { ChatDisplay } from "../components/chat-log/chat-display";
 import { NotesEntry } from "../components/users/notes-entry/notes-entry";
@@ -22,7 +20,11 @@ import { ClientStatus } from "../components/client-status";
 import { MainHeader } from "../components/headings/main-header/main-header";
 import { UsersDisplay } from "../components/users/users-display/users-display";
 
-export const Dashboard = () => {
+interface DashboardProps {
+  handleToast: (toastObject: UseToasterReturnedProps) => void;
+}
+
+export const Dashboard = ({ handleToast }: DashboardProps) => {
   const [chatMessages, setChatMessages] = useState<ChatMessagePayload[]>([]);
   const [joinedChatData, setJoinedChatData] = useState<
     ResponseUserJoinedObject[]
@@ -36,7 +38,6 @@ export const Dashboard = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userDisplayName, setUserDisplayName] = useState("");
-  const toaster = useToaster();
 
   const handleModalToggle = (
     isOpen: boolean,
@@ -210,12 +211,9 @@ export const Dashboard = () => {
         modalIsOpen={modalIsOpen}
         handleModalToggle={handleModalToggle}
         userDisplayName={userDisplayName}
-        // @ts-ignore come back
-        handleToast={toaster}
+        // @ts-ignore TODO: come back
+        handleToast={handleToast}
       />
-      <ToastContainer>
-        <Toaster {...toaster} />
-      </ToastContainer>
     </>
   );
 };
