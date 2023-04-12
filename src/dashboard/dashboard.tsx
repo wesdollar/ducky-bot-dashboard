@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { sortBy } from "lodash";
-import axios from "axios";
 import {
   Box,
   Card,
@@ -19,6 +18,7 @@ import {
 import { ClientStatus } from "../components/client-status";
 import { MainHeader } from "../components/headings/main-header/main-header";
 import { UsersDisplay } from "../components/users/users-display/users-display";
+import { ircResourceKeys } from "@dollardojo/modules/constants/irc-resource-keys";
 
 interface DashboardProps {
   handleToast: (toastObject: UseToasterReturnedProps) => void;
@@ -82,7 +82,7 @@ export const Dashboard = ({ handleToast }: DashboardProps) => {
   }, [chatMessages]);
 
   useEffect(() => {
-    const socket = io("ws://localhost:3001");
+    const socket = io(`ws://${import.meta.env.API_URL}`);
 
     socket.open();
     socket.emit("hello");
@@ -101,7 +101,7 @@ export const Dashboard = ({ handleToast }: DashboardProps) => {
     });
 
     socket.on(
-      "chat-message-cache",
+      `${ircResourceKeys.chatMessages}-cache`,
       ({ data }: { data: ChatMessagePayload[] }) => {
         setChatMessages((prevData) => {
           return [...prevData, ...data];
@@ -110,7 +110,7 @@ export const Dashboard = ({ handleToast }: DashboardProps) => {
     );
 
     socket.on(
-      "user-joined-chat-cache",
+      `${ircResourceKeys.userJoinedChat}-cache`,
       ({ data }: { data: ResponseUserJoinedObject[] }) => {
         let userExistsInList = false;
 
@@ -133,7 +133,7 @@ export const Dashboard = ({ handleToast }: DashboardProps) => {
     );
 
     socket.on(
-      "user-left-chat-cache",
+      `${ircResourceKeys.userLeftChat}-cache`,
       ({ data }: { data: ResponseUserLeftObject[] }) => {
         const updatedChatUserList = joinedChatData.filter(
           (obj) => obj.username !== data[0].user
@@ -149,22 +149,10 @@ export const Dashboard = ({ handleToast }: DashboardProps) => {
   }, []);
 
   useEffect(() => {
-    console.log("socket connected ", socketConnected);
+    console.log(
+      "Welcome to DuckyBot, I'm Ducky! Let's get this boat in the water!"
+    );
   }, [socketConnected]);
-
-  useEffect(() => {
-    const callMe = async () => {
-      try {
-        await axios.get(
-          "http://localhost:3001/cron-jobs/persist-to-db/user-joined-chat"
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    callMe();
-  }, [joinedChatData]);
 
   return (
     <>

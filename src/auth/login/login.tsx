@@ -50,12 +50,15 @@ export const Login = ({
         return console.error("authentication failed");
       }
 
-      response = await axios.post(`//localhost:3001/users/auth/login`, {
-        data: {
-          username,
-          password,
-        },
-      });
+      response = await axios.post(
+        `//${import.meta.env.API_URL}/users/auth/login`,
+        {
+          data: {
+            username,
+            password,
+          },
+        }
+      );
 
       if (response.status === httpStatusCodes.ok) {
         handleSetUserIsAuthenticated(true);
